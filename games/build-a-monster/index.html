@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f4efe4" />
+    <title>BUILD A MONSTER — cracked.fun</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' fill='%23f4efe4'/><circle cx='8' cy='9' r='5.5' fill='%23e0b400' stroke='%2316140f' stroke-width='1.2'/><circle cx='6' cy='8' r='1' fill='%2316140f'/><circle cx='10' cy='8' r='1' fill='%2316140f'/></svg>"
+    />
+    <link rel="stylesheet" href="../../shared.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <a class="fun-home" href="../../">← cracked.fun</a>
+
+    <main>
+      <div class="stage">
+        <div class="specimen">
+          <div class="creature-wrap" id="creatureWrap">
+            <svg
+              id="monster"
+              viewBox="0 0 360 460"
+              role="img"
+              aria-label="Le monstre"
+            >
+              <ellipse
+                id="ground"
+                class="ground"
+                cx="180"
+                cy="428"
+                rx="72"
+                ry="10"
+                fill="#16140f"
+                opacity="0.14"
+              />
+              <g id="monster-bob">
+                <g id="monster-fit">
+                  <g id="layer-legs"></g>
+                  <g id="layer-body"></g>
+                  <g id="layer-arms"></g>
+                  <g id="layer-head"></g>
+                  <g id="layer-eyes"></g>
+                  <g id="layer-mouth"></g>
+                  <g id="layer-accessory"></g>
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          <section class="finale" id="finale" hidden>
+            <h1 id="monsterName"></h1>
+            <p id="monsterTrait"></p>
+          </section>
+        </div>
+      </div>
+
+      <div class="dock" id="dock">
+        <div class="picker" id="picker">
+          <div
+            class="cats"
+            id="cats"
+            role="tablist"
+            aria-label="Catégories"
+          ></div>
+          <div
+            class="parts"
+            id="parts"
+            role="tabpanel"
+            aria-label="Pièces"
+          ></div>
+        </div>
+
+        <div class="actions" id="actions">
+          <button type="button" id="btnRandom">au hasard</button>
+          <button type="button" id="btnReset">recommencer</button>
+          <button type="button" id="btnVoila">voilà</button>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#100e0c" />
+    <title>CRACK-MAN</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='%23ffe14d'/><polygon points='8,8 16,4 16,12' fill='%23100e0c'/></svg>" />
+    <link rel="stylesheet" href="../../shared.css" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="top">
+        <a class="fun-home" href="../../">← cracked.fun</a>
+        <h1>CRACK-MAN</h1>
+        <div class="hud" aria-live="polite">
+          <div><span class="label">score</span> <b id="score">0</b></div>
+          <div><span class="label">record</span> <b id="high">0</b></div>
+          <div><span class="label">niveau</span> <b id="level">1</b></div>
+          <div><span class="label">héros</span> <b id="heroLabel">le S</b></div>
+        </div>
+        <div class="tools">
+          <button type="button" id="muteBtn" aria-pressed="false">son</button>
+          <button type="button" id="fullBtn">plein écran</button>
+        </div>
+      </header>
+
+      <div class="board">
+        <div class="stage" id="stage">
+          <canvas id="game" width="448" height="496"></canvas>
+          <div id="overlay" class="overlay">
+            <p id="overlayTitle" class="ready">qui tu es ?</p>
+            <p id="overlayHint" class="hint">Choisis le S ou le B, puis on lance.</p>
+            <div id="picker" class="picker" role="group" aria-label="Choix du personnage">
+              <button type="button" class="pick" data-hero="s" aria-pressed="true" aria-label="le S">
+                <img src="faces/le-s.png" alt="" width="104" height="104" />
+                <span>le S</span>
+              </button>
+              <button type="button" class="pick" data-hero="b" aria-pressed="false" aria-label="le B">
+                <img src="faces/le-b.png" alt="" width="104" height="104" />
+                <span>le B</span>
+              </button>
+            </div>
+            <div class="overlay-actions">
+              <button id="startBtn" type="button" hidden>C’est parti</button>
+              <button id="changeBtn" type="button" hidden>changer de perso</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pad" aria-label="Direction">
+        <button type="button" data-dir="up" aria-label="Haut">▲</button>
+        <div class="mid">
+          <button type="button" data-dir="left" aria-label="Gauche">◀</button>
+          <button type="button" data-dir="right" aria-label="Droite">▶</button>
+        </div>
+        <button type="button" data-dir="down" aria-label="Bas">▼</button>
+      </div>
+    </div>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

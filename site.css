@@ -1,0 +1,141 @@
+/* Copie du layout neal.fun : fond papier, logo centré, grille de cartes-images. */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #f7f4ee;
+  color: #000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.home {
+  max-width: 1010px;
+  margin: 0 auto;
+  padding: 8px 16px 40px;
+}
+
+.home-header {
+  text-align: center;
+  padding: 26px 0 30px;
+}
+
+.home-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  font-family: "Luckiest Guy", "Arial Rounded MT Bold", "Segoe UI", Arial, sans-serif;
+  font-size: clamp(42px, 8vw, 72px);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: #000;
+}
+
+.logo-face {
+  position: relative;
+  display: inline-block;
+  width: clamp(48px, 8vw, 72px);
+  height: clamp(48px, 8vw, 72px);
+  margin: 0 2px;
+  border: 2.5px solid #000;
+  border-radius: 50%;
+  overflow: hidden;
+  transform: translateY(4%);
+  flex-shrink: 0;
+  background: #e8e2d6;
+}
+
+.logo-face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.logo-eyes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.logo-face .white {
+  fill: #fff;
+  stroke: #111;
+  stroke-width: 1.15;
+}
+
+.logo-face .pupil {
+  fill: #171717;
+}
+
+.home-subtitle {
+  margin: 10px 0 0;
+  color: #000;
+  font-size: clamp(16px, 2.4vw, 21px);
+}
+
+.games-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.game-link {
+  display: block;
+  border-radius: 12px;
+  line-height: 0;
+  transition: transform 0.12s ease-out;
+}
+
+.game-link:hover,
+.game-link:focus-visible {
+  transform: scale(1.03);
+}
+
+.game-image {
+  width: 100%;
+  aspect-ratio: 32 / 15;
+  object-fit: cover;
+  border: 2px solid #000;
+  border-radius: 12px;
+  background: #f7f4ee;
+}
+
+.home-footer {
+  margin-top: 48px;
+  text-align: center;
+  color: #777;
+  font-size: 13px;
+}
+
+.noscript {
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  .games-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 560px) {
+  .games-container {
+    grid-template-columns: 1fr;
+  }
+
+  .home-header {
+    padding: 18px 0 22px;
+  }
+}

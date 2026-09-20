@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>THE BUTTON — cracked.fun</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='2' y='5' width='12' height='6' rx='1.2' fill='%23f3f3f3' stroke='%238a8a8a'/></svg>"
+    />
+    <link rel="stylesheet" href="../../shared.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body data-era="void">
+    <a class="fun-home" href="../../">← cracked.fun</a>
+    <div class="count" id="count" aria-hidden="true"></div>
+
+    <svg
+      class="cosmos"
+      id="cosmos"
+      viewBox="0 0 1200 675"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden="true"
+    ></svg>
+
+    <div class="world" id="world">
+      <div class="globe" id="globe">
+        <div class="picture-wrap">
+          <svg
+            class="picture"
+            id="stage"
+            viewBox="0 0 1200 675"
+            preserveAspectRatio="xMidYMid slice"
+            aria-hidden="true"
+          ></svg>
+        </div>
+        <div class="globe-glass" aria-hidden="true"></div>
+        <div class="globe-base" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <button type="button" class="the-btn" id="btn" autofocus>
+      <span class="crown" aria-hidden="true"></span>
+      <span class="label" id="label">ok</span>
+    </button>
+
+    <p class="caption" id="caption" aria-live="polite"></p>
+
+    <div class="os-dialog" id="dialog" hidden>
+      <div class="os-card" role="dialog" aria-labelledby="dialog-title" aria-modal="true">
+        <div class="os-bar">
+          <span id="dialog-title">Alerte</span>
+          <button type="button" class="os-x" id="dialog-ok" aria-label="fermer">×</button>
+        </div>
+        <p class="os-body" id="dialog-body"></p>
+        <div class="os-actions">
+          <button type="button" class="os-ok" id="dialog-ok-2">OK</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>

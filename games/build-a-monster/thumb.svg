@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 315" role="img">
+  <title>BUILD A MONSTER</title>
+  <rect width="720" height="315" fill="#f4efe4"/>
+  <ellipse cx="176" cy="268" rx="70" ry="10" fill="#16140f" opacity="0.12"/>
+
+  <g fill="#16140f" font-family="Georgia, 'Iowan Old Style', serif" font-weight="700">
+    <text x="42" y="148" font-size="54" letter-spacing="-2">BUILD A</text>
+    <text x="42" y="210" font-size="54" letter-spacing="-2">MONSTER</text>
+  </g>
+
+  <!-- creature: pear + banana + three eyes + zigzag + sticks + wheel + mug -->
+  <g transform="translate(528 40)">
+    <!-- wheel -->
+    <g transform="translate(0 168)">
+      <circle cx="0" cy="38" r="34" fill="#e0b400" stroke="#16140f" stroke-width="2.6" stroke-linejoin="round"/>
+      <circle cx="0" cy="38" r="12" fill="#f4efe4" stroke="#16140f" stroke-width="2.6"/>
+      <line x1="0" y1="38" x2="0" y2="8" stroke="#16140f" stroke-width="2.6" stroke-linecap="round"/>
+      <line x1="0" y1="38" x2="24" y2="54" stroke="#16140f" stroke-width="2.6" stroke-linecap="round"/>
+      <line x1="0" y1="38" x2="-24" y2="54" stroke="#16140f" stroke-width="2.6" stroke-linecap="round"/>
+    </g>
+    <!-- arms -->
+    <g>
+      <line x1="-48" y1="78" x2="-82" y2="122" stroke="#16140f" stroke-width="2.6" stroke-linecap="round"/>
+      <circle cx="-84" cy="126" r="6.5" fill="#e0b400" stroke="#16140f" stroke-width="2.6"/>
+      <line x1="48" y1="78" x2="82" y2="122" stroke="#16140f" stroke-width="2.6" stroke-linecap="round"/>
+      <circle cx="84" cy="126" r="6.5" fill="#e0b400" stroke="#16140f" stroke-width="2.6"/>
+    </g>
+    <!-- body pear -->
+    <path d="M0,16 C28,16 48,44 50,80 C54,116 40,158 0,164 C-40,158 -54,116 -50,80 C-48,44 -28,16 0,16Z" fill="#2c8a7c" stroke="#16140f" stroke-width="2.6" stroke-linejoin="round"/>
+    <!-- banana head -->
+    <g transform="translate(4 8)">
+      <path d="M-56,28 C-70,-8 -24,-54 32,-46 C58,-40 62,-16 42,-8 C10,2 -16,30 -34,50 C-46,60 -52,48 -56,28Z" fill="#e0b400" stroke="#16140f" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M-56,28 C-64,16 -58,-2 -46,-8" fill="none" stroke="#16140f" stroke-width="2.6" stroke-linecap="round"/>
+      <!-- three eyes -->
+      <circle cx="-18" cy="8" r="9" fill="#fbf7ee" stroke="#16140f" stroke-width="2.4"/>
+      <circle cx="16" cy="6" r="9" fill="#fbf7ee" stroke="#16140f" stroke-width="2.4"/>
+      <circle cx="0" cy="-12" r="9" fill="#fbf7ee" stroke="#16140f" stroke-width="2.4"/>
+      <circle cx="-18" cy="8" r="3.4" fill="#16140f"/>
+      <circle cx="16" cy="6" r="3.4" fill="#16140f"/>
+      <circle cx="0" cy="-12" r="3.4" fill="#16140f"/>
+      <!-- zigzag -->
+      <polyline points="-18,24 -8,14 2,28 12,14 22,24" fill="none" stroke="#16140f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <!-- mug -->
+    <g transform="translate(58 96)">
+      <rect x="-16" y="-8" width="28" height="26" rx="3" fill="#efe6d2" stroke="#16140f" stroke-width="2.6"/>
+      <path d="M12,0 h10 a8,8 0 0 1 0,16 h-10" fill="none" stroke="#16140f" stroke-width="2.6" stroke-linejoin="round"/>
+      <path d="M-8,-8 c0,-10 6,-14 12,-10" fill="none" stroke="#16140f" stroke-width="2.6" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>
