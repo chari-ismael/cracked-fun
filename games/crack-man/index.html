@@ -39,15 +39,18 @@
             <p class="setup-label">mode</p>
             <div id="modeRow" class="chip-row" role="group" aria-label="Mode">
               <button type="button" class="chip" data-mode="solo">solo</button>
-              <button type="button" class="chip" data-mode="coop">2P coop</button>
+              <button type="button" class="chip" data-mode="coop">2P local</button>
               <button type="button" class="chip" data-mode="versus">2P chasse</button>
+              <button type="button" class="chip" data-mode="online">coop en ligne</button>
             </div>
-            <div id="onlineBox" class="online-box">
-              <p class="setup-label">en ligne</p>
+            <div id="onlineBox" class="online-box" hidden>
+              <p class="setup-label">salon</p>
+              <p class="online-help">Toi = premier héros. Ton pote = le deuxième. Même score, mêmes vies, même map.</p>
               <div class="online-row">
                 <button type="button" id="hostBtn">créer un salon</button>
                 <input id="roomCode" maxlength="4" spellcheck="false" placeholder="CODE" aria-label="Code salon" />
                 <button type="button" id="joinBtn">rejoindre</button>
+                <button type="button" id="copyLink" hidden>copier le lien</button>
               </div>
               <p id="netStatus" class="net-status"></p>
             </div>

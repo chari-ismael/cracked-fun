@@ -211,6 +211,12 @@ canvas#game {
   margin-top: 8px;
 }
 
+.online-help {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #d8d0c2;
+}
+
 .online-row {
   display: flex;
   flex-wrap: wrap;

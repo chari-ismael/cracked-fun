@@ -63,11 +63,11 @@ export function saveMapId(id) {
 
 export function loadPlayMode() {
   const raw = readStore(MODE_KEY);
-  return raw === "coop" || raw === "versus" || raw === "solo" ? raw : "solo";
+  return raw === "coop" || raw === "versus" || raw === "online" || raw === "solo" ? raw : "solo";
 }
 
 export function savePlayMode(mode) {
-  if (mode === "solo" || mode === "coop" || mode === "versus") writeStore(MODE_KEY, mode);
+  if (mode === "solo" || mode === "coop" || mode === "versus" || mode === "online") writeStore(MODE_KEY, mode);
 }
 
 export function prefersReducedMotion() {

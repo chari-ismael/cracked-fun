@@ -42,16 +42,17 @@ function toggleFullscreen() {
 function loop(now) {
   const dt = Math.min(0.05, (now - last) / 1000 || 0);
   last = now;
-  input.split = net.role === "local" && game.playMode !== "solo";
+  input.split = net.role === "local" && game.playMode !== "solo" && game.playMode !== "online";
   game.remoteGuest = net.role === "guest";
-  if (game.status === STATE.PICK) {
+  game.netRole = net.role;
+  if (net.role === "guest") {
+    const dir = input.consume(0);
+    if (dir) net.send({ t: "dir", dir });
+    input.consumePause();
+  } else if (game.status === STATE.PICK) {
     const dir = input.consume(0);
     if (dir === "left") game.highlightHero("s");
     else if (dir === "right") game.highlightHero("b");
-    input.consumePause();
-  } else if (net.role === "guest") {
-    const dir = input.consume(0);
-    if (dir) net.send({ t: "dir", dir });
     input.consumePause();
   } else {
     if (input.consumePause()) game.togglePause();
@@ -302,18 +303,68 @@ function mazeInfo(g) {
   };
 }
 
+function roomUrl(code) {
+  const url = new URL(location.href);
+  url.searchParams.set("room", code);
+  return url;
+}
+
+function rememberRoom(code) {
+  history.replaceState(null, "", roomUrl(code));
+}
+
+async function copyInvite(code) {
+  const href = roomUrl(code).href;
+  try {
+    await navigator.clipboard.writeText(href);
+    ui.net(`code ${code} — lien copié`);
+  } catch {
+    ui.net(`code ${code} — ${href}`);
+  }
+}
+
+function hostStart() {
+  if (net.role === "guest") return;
+  if (game.playMode === "online" && net.role === "local") {
+    ui.net("crée un salon ou colle un code");
+    return;
+  }
+  if (net.role === "host") game.setPlayMode("online");
+  game.start();
+  if (net.role === "host") net.send(game.packNet());
+}
+
 function boot() {
   game = new Game({ assets, audio, ui });
   ui.renderMaps(MAPS, game.mapId);
   ui.highlightMode(game.playMode);
   net.onStatus = (t) => ui.net(t);
+  net.onPeer = () => {
+    if (net.role === "host") {
+      net.send(game.packLobby());
+      if (game.status !== STATE.PICK && game.status !== STATE.TITLE) net.send(game.packNet());
+      ui.net(`pote connecté — à toi de lancer`);
+    } else if (net.role === "guest") {
+      game.setPlayMode("online");
+      if (game.status === STATE.PICK || game.status === STATE.TITLE) ui.guestWait(true);
+    }
+  };
   net.onMessage = (msg) => {
     if (!msg || !game) return;
     if (msg.t === "dir") game.applyInput(msg.dir, 1);
-    else if (msg.t === "state") game.applyNet(msg);
+    else if (msg.t === "lobby") {
+      game.applyLobby(msg);
+      if (net.role === "guest" && (game.status === STATE.PICK || game.status === STATE.TITLE)) ui.guestWait(true);
+    } else if (msg.t === "state") game.applyNet(msg);
   };
   const room = new URLSearchParams(location.search).get("room");
-  if (room) net.join(room).catch((err) => ui.net(String(err.message || err)));
+  if (room) {
+    game.setPlayMode("online");
+    ui.guestWait(false);
+    const input = document.getElementById("roomCode");
+    if (input) input.value = room;
+    net.join(room).then(() => ui.guestWait(true)).catch((err) => ui.net(String(err.message || err)));
+  }
   window.CRACKED = {
     get game() { return game; },
     playNow(hero = "s") { return dispatch({ op: "playNow", hero }); },
@@ -343,13 +394,16 @@ function boot() {
 
 ui.picker?.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-hero]");
-  if (!btn) return;
+  if (!btn || net.role === "guest") return;
   game.highlightHero(btn.dataset.hero);
+  if (net.role === "host" && net.ready) net.send(game.packLobby());
 });
 
 ui.mapRow?.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-map]");
-  if (btn) game.setMap(btn.dataset.map);
+  if (!btn || net.role === "guest") return;
+  game.setMap(btn.dataset.map);
+  if (net.role === "host" && net.ready) net.send(game.packLobby());
 });
 
 ui.modeRow?.addEventListener("click", (e) => {
@@ -359,11 +413,13 @@ ui.modeRow?.addEventListener("click", (e) => {
 
 document.getElementById("hostBtn")?.addEventListener("click", async () => {
   try {
+    game.setPlayMode("online");
     const code = await net.host();
-    ui.net(`code ${code} — envoie le lien`);
-    const url = new URL(location.href);
-    url.searchParams.set("room", code);
-    history.replaceState(null, "", url);
+    rememberRoom(code);
+    const copy = document.getElementById("copyLink");
+    if (copy) copy.hidden = false;
+    ui.net(`code ${code} — envoie le lien, attends ton pote`);
+    await copyInvite(code);
   } catch (err) {
     ui.net(String(err.message || err));
   }
@@ -372,15 +428,23 @@ document.getElementById("hostBtn")?.addEventListener("click", async () => {
 document.getElementById("joinBtn")?.addEventListener("click", async () => {
   const code = document.getElementById("roomCode")?.value;
   try {
+    game.setPlayMode("online");
+    ui.guestWait(false);
     await net.join(code);
+    rememberRoom(net.code);
+    ui.guestWait(true);
   } catch (err) {
     ui.net(String(err.message || err));
   }
 });
 
+document.getElementById("copyLink")?.addEventListener("click", () => {
+  if (net.code) copyInvite(net.code);
+});
+
 ui.btn.addEventListener("click", () => {
   if (net.role === "guest") return;
-  if (game.status === STATE.GAME_OVER || game.status === STATE.PICK) game.start();
+  if (game.status === STATE.GAME_OVER || game.status === STATE.PICK) hostStart();
 });
 
 ui.changeBtn?.addEventListener("click", () => game.showPick());
@@ -405,10 +469,10 @@ window.addEventListener("keydown", (e) => {
   if (game.status === STATE.PICK) {
     if (e.code === "Digit1") game.highlightHero("s");
     if (e.code === "Digit2" || e.code === "KeyB") game.highlightHero("b");
-    if (e.code === "Enter") game.start(game.hero);
+    if (e.code === "Enter") hostStart();
     return;
   }
-  if (e.code === "Enter" && game.status === STATE.GAME_OVER) game.start();
+  if (e.code === "Enter" && game.status === STATE.GAME_OVER) hostStart();
 });
 
 syncMute();

@@ -54,12 +54,21 @@ export class Game {
     this.ui.setMapName(this.mapInfo.name);
   }
 
+  get isCoop() {
+    return this.playMode === "coop" || this.playMode === "online";
+  }
+
   setPlayMode(mode) {
-    if (mode !== "solo" && mode !== "coop" && mode !== "versus") return;
+    if (mode !== "solo" && mode !== "coop" && mode !== "versus" && mode !== "online") return;
     this.playMode = mode;
     savePlayMode(mode);
     this.ui.highlightMode(mode);
+    this.ui.showOnline(mode === "online");
     if (mode === "coop") this.ui.hint && (this.ui.hint.textContent = "P1 : ZQSD. P2 : flèches. Vous mangez ensemble.");
+    if (mode === "online") {
+      if (this.ui.title && this.status === STATE.PICK) this.ui.title.textContent = "COOP EN LIGNE";
+      this.ui.hint && (this.ui.hint.textContent = "Crée un salon, envoie le lien. Toi = premier héros, l’autre = le deuxième. Vous mangez ensemble.");
+    }
     if (mode === "versus") this.ui.hint && (this.ui.hint.textContent = "P1 (héros) : ZQSD. P2 (elmedhor) : flèches.");
     if (mode === "solo") this.ui.hint && (this.ui.hint.textContent = "Une map, un mode, un visage. Puis c’est parti.");
   }
@@ -78,7 +87,11 @@ export class Game {
 
   showPick() {
     this.status = STATE.PICK;
-    this.ui.show("pick", "CRACK-MAN", "Une map, un mode, un visage. Puis c’est parti.", "C’est parti");
+    if (this.playMode === "online") {
+      this.ui.show("pick", "COOP EN LIGNE", "Crée un salon, envoie le lien. Toi = premier héros, l’autre = le deuxième.", "C’est parti");
+    } else {
+      this.ui.show("pick", "CRACK-MAN", "Une map, un mode, un visage. Puis c’est parti.", "C’est parti");
+    }
     this.ui.highlightPick(this.hero);
     this.ui.highlightMap(this.mapId);
     this.ui.highlightMode(this.playMode);
@@ -112,7 +125,7 @@ export class Game {
       g.reset();
       g.controlled = this.playMode === "versus" && g.id === "red";
     });
-    if (this.playMode === "coop") {
+    if (this.isCoop) {
       this.player2 = this.player2 || new Player(this.maze);
       this.player2.maze = this.maze;
       this.player2.respawn(PLAYER2_SPAWN, "right");
@@ -253,7 +266,7 @@ export class Game {
       hunter.actor.nextDir = dir;
       return;
     }
-    this.player2?.setDirection(dir);
+    if (this.isCoop) this.player2?.setDirection(dir);
   }
 
   togglePause() {
@@ -339,6 +352,10 @@ export class Game {
     };
   }
 
+  packLobby() {
+    return { t: "lobby", mp: this.mapId, hr: this.hero, md: "online" };
+  }
+
   packNet() {
     return {
       t: "state",
@@ -347,23 +364,40 @@ export class Game {
       lv: this.lives,
       le: this.level,
       fr: this.frightTimer,
-      md: this.playMode,
+      md: "online",
       mp: this.mapId,
       hr: this.hero,
       p: [this.player.actor.px, this.player.actor.py, this.player.actor.dir, this.player.mouth],
       p2: this.player2 ? [this.player2.actor.px, this.player2.actor.py, this.player2.actor.dir, this.player2.mouth] : null,
       g: this.ghosts.map((gh) => [gh.actor.px, gh.actor.py, gh.actor.dir, gh.state]),
       grid: Array.from(this.maze.grid),
+      base: Array.from(this.maze.base),
     };
+  }
+
+  applyLobby(s) {
+    if (!s) return;
+    this.setPlayMode("online");
+    if (s.mp) this.setMap(s.mp);
+    if (s.hr) this.highlightHero(s.hr);
   }
 
   applyNet(s) {
     if (!s || s.t !== "state") return;
-    if (s.mp && s.mp !== this.maze.mapId) {
-      this.mapId = s.mp;
+    const was = this.status;
+    if (s.mp) this.mapId = s.mp;
+    if (s.base && s.base.length === this.maze.base.length) {
+      const same = this.maze.base.every((v, i) => v === s.base[i]);
+      if (!same || s.mp !== this.maze.mapId || (s.le && s.le !== this.maze.level && was !== STATE.PLAYING)) {
+        this.maze.mapId = s.mp || this.maze.mapId;
+        this.maze.level = s.le || this.maze.level;
+        this.maze.base = Uint8Array.from(s.base);
+        this.maze.stamp += 1;
+      }
+    } else if (s.mp && s.mp !== this.maze.mapId) {
       this.maze.newLevel(s.le || 1, s.mp);
     }
-    this.playMode = s.md || this.playMode;
+    this.playMode = "online";
     this.status = s.st;
     this.score = s.sc;
     this.lives = s.lv;
@@ -378,9 +412,12 @@ export class Game {
       }
     }
     placeActor(this.player.actor, s.p);
+    if (s.p?.[3] != null) this.player.mouth = s.p[3];
     if (s.p2) {
       if (!this.player2) this.player2 = new Player(this.maze);
+      this.player2.maze = this.maze;
       placeActor(this.player2.actor, s.p2);
+      if (s.p2[3] != null) this.player2.mouth = s.p2[3];
     }
     s.g?.forEach((row, i) => {
       const gh = this.ghosts[i];
@@ -389,9 +426,12 @@ export class Game {
       if (row[3]) gh.state = row[3];
     });
     this.ui.hud(this.score, this.high, this.level, this.lives, this.heroInfo.name);
+    this.ui.setMapName(this.mapInfo.name);
     if (this.status === STATE.PLAYING || this.status === STATE.READY) this.ui.hide();
-    else if (this.status === STATE.GAME_OVER) this.enterGameOver();
-    else if (this.status === STATE.PAUSED) this.ui.show("paused", "PAUSE", "", "");
+    else if (this.status === STATE.GAME_OVER && was !== STATE.GAME_OVER) {
+      this.enterGameOver();
+      if (this.remoteGuest) this.ui.btn.hidden = true;
+    } else if (this.status === STATE.PAUSED && was !== STATE.PAUSED) this.ui.show("paused", "PAUSE", "", "");
   }
 }
 

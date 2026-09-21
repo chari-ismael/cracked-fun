@@ -70,8 +70,9 @@ export class UI {
     this.title.textContent = title;
     this.hint.textContent = hint || "";
     const pick = mode === "pick";
+    const wait = mode === "wait";
     if (this.picker) this.picker.hidden = !pick;
-    if (this.setup) this.setup.hidden = !pick;
+    if (this.setup) this.setup.hidden = !(pick || wait);
     if (button) {
       this.btn.hidden = false;
       this.btn.textContent = button;
@@ -113,6 +114,21 @@ export class UI {
     this.modeRow?.querySelectorAll("[data-mode]").forEach((b) => {
       b.classList.toggle("is-on", b.dataset.mode === mode);
     });
+    this.showOnline(mode === "online");
+  }
+
+  showOnline(on) {
+    const box = document.getElementById("onlineBox");
+    if (box) box.hidden = !on;
+  }
+
+  guestWait(connected) {
+    this.show(
+      "wait",
+      "COOP EN LIGNE",
+      connected ? "C’est toi le deuxième héros. L’hôte lance la partie." : "Connexion au salon…",
+      "",
+    );
   }
 
   net(text) {

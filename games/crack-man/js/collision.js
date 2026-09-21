@@ -28,7 +28,7 @@ function eatAt(game, player) {
 
 function eatPellets(game) {
   eatAt(game, game.player);
-  if (game.playMode === "coop") eatAt(game, game.player2);
+  if (game.isCoop) eatAt(game, game.player2);
 }
 
 function hitsGhost(player, prev, g) {
@@ -43,7 +43,7 @@ function hitsGhost(player, prev, g) {
 function collideGhosts(game) {
   if (game.status !== STATE.PLAYING) return;
   const pack = [{ p: game.player, prev: game.playerPrev }];
-  if (game.playMode === "coop" && game.player2) pack.push({ p: game.player2, prev: game.player2Prev });
+  if (game.isCoop && game.player2) pack.push({ p: game.player2, prev: game.player2Prev });
   for (const { p, prev } of pack) {
     for (const g of game.ghosts) {
       if (g.state === "inHouse" || g.state === "leaving" || g.state === "entering" || g.state === "eaten") continue;

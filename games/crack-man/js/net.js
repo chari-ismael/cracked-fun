@@ -44,16 +44,19 @@ export class Net {
   wire(conn) {
     this.conn = conn;
     conn.on("data", (msg) => this.onMessage?.(msg));
-    conn.on("open", () => {
+    const opened = () => {
+      if (this.ready && this.conn === conn) return;
       this.ready = true;
       this.status("connecté");
       this.onPeer?.();
-    });
+    };
+    conn.on("open", opened);
     conn.on("close", () => {
       this.ready = false;
       this.status("coupé");
     });
     conn.on("error", () => this.status("erreur réseau"));
+    if (conn.open) opened();
   }
 
   async host() {
