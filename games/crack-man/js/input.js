@@ -1,10 +1,6 @@
 /* File de commandes unique. Tous les contrôles envoient UP/DOWN/LEFT/RIGHT. */
 
-const KEY_TO_DIR = {
-  ArrowUp: "up",
-  ArrowDown: "down",
-  ArrowLeft: "left",
-  ArrowRight: "right",
+const P1_KEYS = {
   KeyW: "up",
   KeyS: "down",
   KeyA: "left",
@@ -12,11 +8,18 @@ const KEY_TO_DIR = {
   KeyZ: "up",
   KeyQ: "left",
 };
+const P2_KEYS = {
+  ArrowUp: "up",
+  ArrowDown: "down",
+  ArrowLeft: "left",
+  ArrowRight: "right",
+};
 
 export class Input {
   constructor(canvas, padRoot) {
-    this.queued = null;
-    this.held = [];
+    this.split = false;
+    this.queued = [null, null];
+    this.held = [[], []];
     this.paused = false;
     this.touch0 = null;
     this._onKey = (e) => this.onKey(e);
@@ -46,24 +49,39 @@ export class Input {
       }
       return;
     }
-    const dir = KEY_TO_DIR[e.code];
-    if (!dir) return;
+    const slot = this.slotFor(e.code);
+    const dir = slot === 1 ? P2_KEYS[e.code] : P1_KEYS[e.code] || P2_KEYS[e.code];
+    if (slot < 0 || !dir) return;
     e.preventDefault();
-    this.queued = dir;
-    this.held = this.held.filter((d) => d !== dir);
-    this.held.push(dir);
+    this.queued[slot] = dir;
+    this.held[slot] = this.held[slot].filter((d) => d !== dir);
+    this.held[slot].push(dir);
+    if (!this.split && slot === 0 && P2_KEYS[e.code]) {
+      this.queued[0] = dir;
+    }
+  }
+
+  slotFor(code) {
+    if (this.split) {
+      if (P1_KEYS[code]) return 0;
+      if (P2_KEYS[code]) return 1;
+      return -1;
+    }
+    if (P1_KEYS[code] || P2_KEYS[code]) return 0;
+    return -1;
   }
 
   onKeyUp(e) {
-    const dir = KEY_TO_DIR[e.code];
-    if (!dir) return;
-    this.held = this.held.filter((d) => d !== dir);
+    const slot = this.slotFor(e.code);
+    const dir = P1_KEYS[e.code] || P2_KEYS[e.code];
+    if (slot < 0 || !dir) return;
+    this.held[slot] = this.held[slot].filter((d) => d !== dir);
   }
 
   onPad(e) {
     e.preventDefault();
     const dir = e.currentTarget.dataset.dir;
-    if (dir) this.queued = dir;
+    if (dir) this.queued[0] = dir;
   }
 
   onTouchStart(e) {
@@ -78,12 +96,12 @@ export class Input {
     const dy = t.clientY - this.touch0.y;
     if (Math.hypot(dx, dy) < 18) return;
     this.touch0.used = true;
-    this.queued = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
+    this.queued[0] = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? "right" : "left") : (dy > 0 ? "down" : "up");
   }
 
-  consume() {
-    const dir = this.queued || this.held[this.held.length - 1] || null;
-    this.queued = null;
+  consume(slot = 0) {
+    const dir = this.queued[slot] || this.held[slot][this.held[slot].length - 1] || null;
+    this.queued[slot] = null;
     return dir;
   }
 

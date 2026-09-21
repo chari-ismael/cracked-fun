@@ -6,6 +6,8 @@ import { Renderer } from "./renderer.js";
 import { Game } from "./game.js";
 import { STATE } from "./state.js";
 import { HEROES, COLS, ROWS } from "./config.js";
+import { MAPS } from "./maps.js";
+import { Net } from "./net.js";
 import { nextDirOnPath, nearestWalkable } from "./path.js";
 
 document.documentElement.dataset.crack = "booting";
@@ -19,9 +21,11 @@ const audio = new Audio();
 const ui = new UI();
 const input = new Input(canvas, document.querySelector(".pad"));
 const renderer = new Renderer(canvas);
+const net = new Net();
 
 let game;
 let last = 0;
+let lastNet = 0;
 
 function syncMute() {
   if (!muteBtn) return;
@@ -38,15 +42,27 @@ function toggleFullscreen() {
 function loop(now) {
   const dt = Math.min(0.05, (now - last) / 1000 || 0);
   last = now;
+  input.split = net.role === "local" && game.playMode !== "solo";
+  game.remoteGuest = net.role === "guest";
   if (game.status === STATE.PICK) {
-    const dir = input.consume();
+    const dir = input.consume(0);
     if (dir === "left") game.highlightHero("s");
     else if (dir === "right") game.highlightHero("b");
     input.consumePause();
+  } else if (net.role === "guest") {
+    const dir = input.consume(0);
+    if (dir) net.send({ t: "dir", dir });
+    input.consumePause();
   } else {
     if (input.consumePause()) game.togglePause();
-    const dir = input.consume();
-    if (dir) game.applyInput(dir);
+    const a = input.consume(0);
+    if (a) game.applyInput(a, 0);
+    const b = input.consume(1);
+    if (b) game.applyInput(b, 1);
+    if (net.role === "host" && net.ready && now - lastNet > 80) {
+      net.send(game.packNet());
+      lastNet = now;
+    }
   }
   game.tick(dt);
   renderer.draw(game);
@@ -288,6 +304,16 @@ function mazeInfo(g) {
 
 function boot() {
   game = new Game({ assets, audio, ui });
+  ui.renderMaps(MAPS, game.mapId);
+  ui.highlightMode(game.playMode);
+  net.onStatus = (t) => ui.net(t);
+  net.onMessage = (msg) => {
+    if (!msg || !game) return;
+    if (msg.t === "dir") game.applyInput(msg.dir, 1);
+    else if (msg.t === "state") game.applyNet(msg);
+  };
+  const room = new URLSearchParams(location.search).get("room");
+  if (room) net.join(room).catch((err) => ui.net(String(err.message || err)));
   window.CRACKED = {
     get game() { return game; },
     playNow(hero = "s") { return dispatch({ op: "playNow", hero }); },
@@ -321,7 +347,39 @@ ui.picker?.addEventListener("click", (e) => {
   game.highlightHero(btn.dataset.hero);
 });
 
+ui.mapRow?.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-map]");
+  if (btn) game.setMap(btn.dataset.map);
+});
+
+ui.modeRow?.addEventListener("click", (e) => {
+  const btn = e.target.closest("[data-mode]");
+  if (btn) game.setPlayMode(btn.dataset.mode);
+});
+
+document.getElementById("hostBtn")?.addEventListener("click", async () => {
+  try {
+    const code = await net.host();
+    ui.net(`code ${code} — envoie le lien`);
+    const url = new URL(location.href);
+    url.searchParams.set("room", code);
+    history.replaceState(null, "", url);
+  } catch (err) {
+    ui.net(String(err.message || err));
+  }
+});
+
+document.getElementById("joinBtn")?.addEventListener("click", async () => {
+  const code = document.getElementById("roomCode")?.value;
+  try {
+    await net.join(code);
+  } catch (err) {
+    ui.net(String(err.message || err));
+  }
+});
+
 ui.btn.addEventListener("click", () => {
+  if (net.role === "guest") return;
   if (game.status === STATE.GAME_OVER || game.status === STATE.PICK) game.start();
 });
 

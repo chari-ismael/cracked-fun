@@ -24,6 +24,7 @@ export class Ghost {
     this.state = "scatter";
     this.exitTimer = 0;
     this.bounceDir = -1; // -1 = vers le haut dans la maison
+    this.controlled = false;
     this.reset();
   }
 
@@ -136,7 +137,7 @@ export class Ghost {
       }
     }
 
-    if (this.actor.atCenter()) this.chooseDir(ctx);
+    if (this.actor.atCenter() && !this.controlled) this.chooseDir(ctx);
     this.actor.update(dt, (n) => this.maze.isWalkable(n.x, n.y));
   }
 

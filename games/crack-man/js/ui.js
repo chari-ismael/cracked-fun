@@ -8,9 +8,14 @@ export class UI {
     this.btn = document.getElementById("startBtn");
     this.changeBtn = document.getElementById("changeBtn");
     this.picker = document.getElementById("picker");
+    this.setup = document.getElementById("setup");
+    this.mapRow = document.getElementById("mapRow");
+    this.modeRow = document.getElementById("modeRow");
+    this.netStatus = document.getElementById("netStatus");
     this.score = document.getElementById("score");
     this.high = document.getElementById("high");
     this.level = document.getElementById("level");
+    this.mapLabel = document.getElementById("mapLabel");
     this.heroLabel = document.getElementById("heroLabel");
     this.last = {};
   }
@@ -55,6 +60,10 @@ export class UI {
     this.last = { score, high, level, lives, hero: heroName };
   }
 
+  setMapName(name) {
+    if (this.mapLabel) this.mapLabel.textContent = name;
+  }
+
   show(mode, title, hint, button) {
     this.overlay.classList.remove("hidden");
     this.overlay.dataset.mode = mode;
@@ -62,6 +71,7 @@ export class UI {
     this.hint.textContent = hint || "";
     const pick = mode === "pick";
     if (this.picker) this.picker.hidden = !pick;
+    if (this.setup) this.setup.hidden = !pick;
     if (button) {
       this.btn.hidden = false;
       this.btn.textContent = button;
@@ -76,5 +86,36 @@ export class UI {
     this.btn.hidden = true;
     if (this.changeBtn) this.changeBtn.hidden = true;
     if (this.picker) this.picker.hidden = true;
+    if (this.setup) this.setup.hidden = true;
+  }
+
+  renderMaps(maps, current) {
+    if (!this.mapRow) return;
+    this.mapRow.replaceChildren(...maps.map((m) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip";
+      b.dataset.map = m.id;
+      b.textContent = m.name;
+      b.title = m.blurb || "";
+      return b;
+    }));
+    this.highlightMap(current);
+  }
+
+  highlightMap(id) {
+    this.mapRow?.querySelectorAll("[data-map]").forEach((b) => {
+      b.classList.toggle("is-on", b.dataset.map === id);
+    });
+  }
+
+  highlightMode(mode) {
+    this.modeRow?.querySelectorAll("[data-mode]").forEach((b) => {
+      b.classList.toggle("is-on", b.dataset.mode === mode);
+    });
+  }
+
+  net(text) {
+    if (this.netStatus) this.netStatus.textContent = text || "";
   }
 }

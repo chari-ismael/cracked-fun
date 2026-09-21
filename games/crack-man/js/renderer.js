@@ -1,6 +1,6 @@
 /* Vue complète du labyrinthe. Aucune logique de jeu ici. */
 
-import { TILE, WIDTH, HEIGHT, COLS, ROWS, CAST, DIRS } from "./config.js";
+import { TILE, WIDTH, HEIGHT, COLS, ROWS, CAST, DIRS, HEROES } from "./config.js";
 import { CELL } from "./maze.js";
 import { STATE, GHOST } from "./state.js";
 import { prefersReducedMotion } from "./prefs.js";
@@ -111,7 +111,8 @@ export class Renderer {
     if (game.status === STATE.LEVEL_COMPLETE) this.drawBanner("NIVEAU SUIVANT", WIDTH / 2, 20 * TILE + 4);
     for (const g of game.ghosts) this.drawGhost(g, game);
     if (game.status !== STATE.DYING || game.player.deathT < 0.92) {
-      this.drawPlayer(game.player, game);
+      this.drawPlayer(game.player, game, game.hero);
+      if (game.player2) this.drawPlayer(game.player2, game, game.hero === "s" ? "b" : "s");
     }
     this.drawPops(game);
     this.drawLives(game);
@@ -222,11 +223,11 @@ export class Renderer {
     }
   }
 
-  drawPlayer(player, game) {
+  drawPlayer(player, game, heroId = game.hero) {
     const { ctx } = this;
     const a = player.actor;
-    const info = game.heroInfo;
-    const face = game.assets.faces[game.hero];
+    const info = HEROES[heroId] || game.heroInfo;
+    const face = game.assets.faces[heroId] || game.assets.faces[game.hero];
     const dying = game.status === STATE.DYING;
     const open = dying
       ? 0.16 + player.deathT * 0.9

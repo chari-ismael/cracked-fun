@@ -49,6 +49,27 @@ export function saveHero(id) {
   if (id === "s" || id === "b") writeStore(HERO_KEY, id);
 }
 
+const MAP_KEY = "crackman-map";
+const MODE_KEY = "crackman-mode";
+
+export function loadMapId() {
+  const raw = readStore(MAP_KEY);
+  return raw || "classic";
+}
+
+export function saveMapId(id) {
+  if (id) writeStore(MAP_KEY, id);
+}
+
+export function loadPlayMode() {
+  const raw = readStore(MODE_KEY);
+  return raw === "coop" || raw === "versus" || raw === "solo" ? raw : "solo";
+}
+
+export function savePlayMode(mode) {
+  if (mode === "solo" || mode === "coop" || mode === "versus") writeStore(MODE_KEY, mode);
+}
+
 export function prefersReducedMotion() {
   try {
     return window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches === true;

@@ -150,6 +150,7 @@ canvas#game {
   text-align: center;
   gap: 10px;
   padding: 16px;
+  overflow: auto;
 }
 
 .overlay.hidden {
@@ -168,6 +169,78 @@ canvas#game {
   font-size: 14px;
   color: #d8d0c2;
   max-width: 22em;
+}
+
+.setup {
+  width: min(420px, 100%);
+  text-align: center;
+}
+
+.setup-label {
+  margin: 10px 0 6px;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #a39a8c;
+}
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.chip {
+  background: transparent;
+  color: #f4efe4;
+  border: 1px solid #6d675c;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chip.is-on {
+  background: var(--gold);
+  color: #16140f;
+  border-color: var(--gold);
+}
+
+.online-box {
+  margin-top: 8px;
+}
+
+.online-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.online-row input {
+  width: 4.6em;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  border: 1px solid #6d675c;
+  border-radius: 999px;
+  background: #1a1712;
+  color: #f4efe4;
+  padding: 8px 10px;
+}
+
+.online-row button {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.net-status {
+  margin: 6px 0 0;
+  min-height: 1.2em;
+  font-size: 12px;
+  color: #e2b100;
 }
 
 .picker {

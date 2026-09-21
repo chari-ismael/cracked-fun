@@ -13,8 +13,8 @@ export class Player {
     this.respawn();
   }
 
-  respawn() {
-    this.actor.place(PLAYER_SPAWN, "left");
+  respawn(spawn = PLAYER_SPAWN, facing = "left") {
+    this.actor.place(spawn, facing);
     this.mouth = 0;
     this.deathT = 0;
     this.chomp = 0;

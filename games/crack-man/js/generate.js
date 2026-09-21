@@ -40,7 +40,7 @@ const HOUSE_BAND = [
   "######.##.########.##.######",
 ];
 
-const CLASSIC = [
+export const CLASSIC = [
   "############################",
   "#............##............#",
   "#.####.#####.##.#####.####.#",
@@ -142,7 +142,7 @@ class Grid {
   }
 }
 
-function parseLayout(lines) {
+export function parseLayout(lines) {
   const g = new Uint8Array(COLS * ROWS);
   for (let y = 0; y < ROWS; y += 1) {
     const row = lines[y];

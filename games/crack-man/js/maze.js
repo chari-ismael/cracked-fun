@@ -2,7 +2,8 @@
    28 colonnes x 31 lignes. Les colonnes s'enroulent (tunnel), les lignes non. */
 
 import { COLS, ROWS } from "./config.js";
-import { generateMaze, hashGrid } from "./generate.js";
+import { hashGrid } from "./generate.js";
+import { findMap, gridFromMap } from "./maps.js";
 
 export const CELL = {
   VOID: 0, // hors labyrinthe, infranchissable
@@ -20,13 +21,15 @@ export class Maze {
     this.base = new Uint8Array(COLS * ROWS);
     this.stamp = 0;
     this.level = 1;
-    this.newLevel(1);
+    this.mapId = "classic";
+    this.newLevel(1, "classic");
   }
 
-  /* Charge un labyrinthe déterministe pour ce niveau (seed = niveau). */
-  newLevel(level) {
-    const built = generateMaze(level);
-    this.base = built.grid;
+  /* Charge un labyrinthe pour ce niveau et cette map. */
+  newLevel(level, mapId = this.mapId) {
+    const map = findMap(mapId);
+    this.mapId = map.id;
+    this.base = gridFromMap(map, level);
     this.level = level;
     this.stamp += 1;
     this.reset();

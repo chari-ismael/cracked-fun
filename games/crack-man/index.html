@@ -18,6 +18,7 @@
           <div><span class="label">score</span> <b id="score">0</b></div>
           <div><span class="label">record</span> <b id="high">0</b></div>
           <div><span class="label">niveau</span> <b id="level">1</b></div>
+          <div><span class="label">map</span> <b id="mapLabel">Classique</b></div>
           <div><span class="label">héros</span> <b id="heroLabel">le S</b></div>
         </div>
         <div class="tools">
@@ -29,24 +30,43 @@
       <div class="board">
         <div class="stage" id="stage">
           <canvas id="game" width="448" height="496"></canvas>
-          <div id="overlay" class="overlay">
-            <p id="overlayTitle" class="ready">qui tu es ?</p>
-            <p id="overlayHint" class="hint">Choisis le S ou le B, puis on lance.</p>
-            <div id="picker" class="picker" role="group" aria-label="Choix du personnage">
-              <button type="button" class="pick" data-hero="s" aria-pressed="true" aria-label="le S">
-                <img src="faces/le-s.png" alt="" width="104" height="104" />
-                <span>le S</span>
-              </button>
-              <button type="button" class="pick" data-hero="b" aria-pressed="false" aria-label="le B">
-                <img src="faces/le-b.png" alt="" width="104" height="104" />
-                <span>le B</span>
-              </button>
+        <div id="overlay" class="overlay">
+          <p id="overlayTitle" class="ready">CRACK-MAN</p>
+          <p id="overlayHint" class="hint">Une map, un mode, un visage.</p>
+          <div id="setup" class="setup">
+            <p class="setup-label">map</p>
+            <div id="mapRow" class="chip-row" role="group" aria-label="Carte"></div>
+            <p class="setup-label">mode</p>
+            <div id="modeRow" class="chip-row" role="group" aria-label="Mode">
+              <button type="button" class="chip" data-mode="solo">solo</button>
+              <button type="button" class="chip" data-mode="coop">2P coop</button>
+              <button type="button" class="chip" data-mode="versus">2P chasse</button>
             </div>
-            <div class="overlay-actions">
-              <button id="startBtn" type="button" hidden>C’est parti</button>
-              <button id="changeBtn" type="button" hidden>changer de perso</button>
+            <div id="onlineBox" class="online-box">
+              <p class="setup-label">en ligne</p>
+              <div class="online-row">
+                <button type="button" id="hostBtn">créer un salon</button>
+                <input id="roomCode" maxlength="4" spellcheck="false" placeholder="CODE" aria-label="Code salon" />
+                <button type="button" id="joinBtn">rejoindre</button>
+              </div>
+              <p id="netStatus" class="net-status"></p>
             </div>
           </div>
+          <div id="picker" class="picker" role="group" aria-label="Choix du personnage">
+            <button type="button" class="pick" data-hero="s" aria-pressed="true" aria-label="le S">
+              <img src="faces/le-s.png" alt="" width="104" height="104" />
+              <span>le S</span>
+            </button>
+            <button type="button" class="pick" data-hero="b" aria-pressed="false" aria-label="le B">
+              <img src="faces/le-b.png" alt="" width="104" height="104" />
+              <span>le B</span>
+            </button>
+          </div>
+          <div class="overlay-actions">
+            <button id="startBtn" type="button" hidden>C’est parti</button>
+            <button id="changeBtn" type="button" hidden>changer de perso</button>
+          </div>
+        </div>
         </div>
       </div>
 

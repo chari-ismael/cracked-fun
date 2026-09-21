@@ -52,6 +52,7 @@ export const PHASES = [
 export const POINTS = { pellet: 10, power: 50, ghostBase: 200, ghostMax: 1600 };
 
 export const PLAYER_SPAWN = { x: 13, y: 23 };
+export const PLAYER2_SPAWN = { x: 14, y: 23 };
 
 /* Maison des fantômes : porte en (13,12)-(14,12), sortie sur la case (13,11). */
 export const HOUSE_EXIT_TILE = { x: 13, y: 11 };
